@@ -1,39 +1,32 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryChip extends StatelessWidget {
   final String label;
   final bool selected;
-  final VoidCallback? onTap;
 
-  const PrimaryChip({
-    super.key,
-    required this.label,
-    this.selected = false,
-    this.onTap,
-  });
+  const PrimaryChip({super.key, required this.label, required this.selected});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        margin: const EdgeInsets.only(right: 8),
-        decoration: BoxDecoration(
-          color: selected ? colorScheme.primary : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: selected ? colorScheme.primary : Colors.grey.shade300,
-          ),
+    return Container(
+      margin: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      height: 34,
+      decoration: BoxDecoration(
+        color: selected ? const Color(0xFFFFF4EC) : Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: selected ? Colors.deepOrange : Colors.grey.shade300,
         ),
+      ),
+      child: Center(
         child: Text(
           label,
           style: TextStyle(
             fontSize: 13,
-            color: selected ? Colors.white : Colors.black87,
             fontWeight: FontWeight.w500,
+            color: selected ? Colors.deepOrange : Colors.grey,
           ),
         ),
       ),

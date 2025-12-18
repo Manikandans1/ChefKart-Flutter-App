@@ -1,36 +1,25 @@
 import 'package:flutter/material.dart';
-
 import '../models/dish_detail.dart';
-import '../services/dish_api_service.dart';
+import '../services/dishes_api_service.dart';
 
 class DishDetailViewModel extends ChangeNotifier {
-  final DishApiService api;
-  final int dishId;
+  final _api = DishesApiService();
 
-  bool _isLoading = false;
-  String? _errorMessage;
-  DishDetail? _detail;
+  DishDetail? detail;
+  bool isLoading = false;
+  String? error;
 
-  DishDetailViewModel(this.api, {required this.dishId}) {
-    loadDetail();
-  }
-
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  DishDetail? get detail => _detail;
-
-  Future<void> loadDetail() async {
-    _isLoading = true;
-    _errorMessage = null;
+  Future<void> loadDetail(int id) async {
+    isLoading = true;
     notifyListeners();
 
     try {
-      _detail = await api.fetchDishDetail(dishId);
+      detail = await _api.fetchDishDetail(id);
     } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      error = e.toString();
     }
+
+    isLoading = false;
+    notifyListeners();
   }
 }

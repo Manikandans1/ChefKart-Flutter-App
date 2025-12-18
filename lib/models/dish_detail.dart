@@ -1,23 +1,22 @@
 class DishDetail {
-  final String name;
   final int id;
+  final String name;
   final String timeToPrepare;
   final Ingredients ingredients;
 
   DishDetail({
-    required this.name,
     required this.id,
+    required this.name,
     required this.timeToPrepare,
     required this.ingredients,
   });
 
   factory DishDetail.fromJson(Map<String, dynamic> json) {
     return DishDetail(
-      name: json['name'] as String,
-      id: json['id'] as int,
-      timeToPrepare: json['timeToPrepare'] as String,
-      ingredients:
-      Ingredients.fromJson(json['ingredients'] as Map<String, dynamic>),
+      id: json['id'],
+      name: json['name'],
+      timeToPrepare: json['timeToPrepare'],
+      ingredients: Ingredients.fromJson(json['ingredients']),
     );
   }
 }
@@ -35,14 +34,14 @@ class Ingredients {
 
   factory Ingredients.fromJson(Map<String, dynamic> json) {
     return Ingredients(
-      vegetables: (json['vegetables'] as List<dynamic>)
-          .map((e) => IngredientItem.fromJson(e as Map<String, dynamic>))
+      vegetables: (json['vegetables'] as List)
+          .map((e) => IngredientItem.fromJson(e))
           .toList(),
-      spices: (json['spices'] as List<dynamic>)
-          .map((e) => IngredientItem.fromJson(e as Map<String, dynamic>))
+      spices: (json['spices'] as List)
+          .map((e) => IngredientItem.fromJson(e))
           .toList(),
-      appliances: (json['appliances'] as List<dynamic>)
-          .map((e) => Appliance.fromJson(e as Map<String, dynamic>))
+      appliances: (json['appliances'] as List)
+          .map((e) => Appliance.fromJson(e))
           .toList(),
     );
   }
@@ -59,15 +58,15 @@ class IngredientItem {
 
   factory IngredientItem.fromJson(Map<String, dynamic> json) {
     return IngredientItem(
-      name: json['name'] as String,
-      quantity: json['quantity'] as String,
+      name: json['name'],
+      quantity: json['quantity'],
     );
   }
 }
 
 class Appliance {
   final String name;
-  final String image; // empty string in API, but kept for extensibility
+  final String image;
 
   Appliance({
     required this.name,
@@ -76,8 +75,8 @@ class Appliance {
 
   factory Appliance.fromJson(Map<String, dynamic> json) {
     return Appliance(
-      name: json['name'] as String,
-      image: (json['image'] ?? '') as String,
+      name: json['name'],
+      image: json['image'],
     );
   }
 }

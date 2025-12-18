@@ -1,85 +1,49 @@
 import 'package:flutter/material.dart';
-import '../models/dish_list_response.dart';
-import '../services/dish_api_service.dart';
+import '../models/dish.dart';
+import '../models/popular_dish.dart';
+import '../services/dishes_api_service.dart';
 
 class DishesViewModel extends ChangeNotifier {
-  final DishApiService api;
-  bool _isLoading = false;
-  String? _errorMessage;
-  List<Dish> _dishes = [];
-  List<PopularDish> _popular = [];
-  String _searchQuery = '';
+  final _api = DishesApiService();
 
-  // cart
-  final Map<int, int> _cart = {};
+  List<Dish> dishes = [];
+  List<PopularDish> popularDishes = [];
+  Map<int, int> cart = {};
 
-  // Date and Time selection
-  DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  bool isLoading = false;
 
-  DishesViewModel(this.api);
-
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-
-  List<Dish> get dishes {
-    if (_searchQuery.isEmpty) return _dishes;
-    return _dishes
-        .where((d) => d.name.toLowerCase().contains(_searchQuery.toLowerCase()))
-        .toList();
-  }
-
-  List<PopularDish> get popularDishes => _popular;
-  int get totalItemsSelected =>
-      _cart.values.fold<int>(0, (prev, q) => prev + q);
-  int quantityForDish(int id) => _cart[id] ?? 0;
-  DateTime get selectedDate => _selectedDate;
-  TimeOfDay get selectedTime => _selectedTime;
-
-  Future<void> loadDishes() async {
-    _isLoading = true;
-    _errorMessage = null;
+  Future<void> loadData() async {
+    isLoading = true;
     notifyListeners();
+
     try {
-      final res = await api.fetchDishes();
-      _dishes = res.dishes;
-      _popular = res.popularDishes;
+      final result = await _api.fetchDishes();
+      dishes = result.$1;
+      popularDishes = result.$2;
     } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      debugPrint(e.toString());
     }
-  }
 
-  void setSearchQuery(String query) {
-    _searchQuery = query;
+    isLoading = false;
     notifyListeners();
   }
 
-  void addToCart(int id) {
-    _cart[id] = (_cart[id] ?? 0) + 1;
+  int qty(int id) => cart[id] ?? 0;
+
+  void add(int id) {
+    cart[id] = qty(id) + 1;
     notifyListeners();
   }
 
-  void updateQuantity(int id, int q) {
-    if (q <= 0) _cart.remove(id);
-    else _cart[id] = q;
+  void remove(int id) {
+    if (qty(id) > 1) {
+      cart[id] = qty(id) - 1;
+    } else {
+      cart.remove(id);
+    }
     notifyListeners();
   }
 
-  void clearCart() {
-    _cart.clear();
-    notifyListeners();
-  }
-
-  void setDate(DateTime d) {
-    _selectedDate = d;
-    notifyListeners();
-  }
-
-  void setTime(TimeOfDay t) {
-    _selectedTime = t;
-    notifyListeners();
-  }
+  int get totalItems =>
+      cart.values.fold(0, (sum, e) => sum + e);
 }
